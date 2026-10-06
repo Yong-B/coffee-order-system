@@ -75,7 +75,8 @@ com.example.coffee_order_system
 
 ## 🗂️ ERD
 
-<img width="262" height="657" alt="image" src="https://github.com/user-attachments/assets/40b417d8-bbac-46a7-9bc0-ff08878e1ef9" />
+<img width="997" height="756" alt="image" src="https://github.com/user-attachments/assets/1013d4d2-047b-4b0e-9d19-8e5d3c9ccf85" />
+
 
 ---
 
