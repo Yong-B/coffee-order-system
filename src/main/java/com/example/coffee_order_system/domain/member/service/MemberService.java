@@ -4,11 +4,13 @@ import com.example.coffee_order_system.domain.member.dto.LoginRequest;
 import com.example.coffee_order_system.domain.member.dto.MemberResponse;
 import com.example.coffee_order_system.domain.member.entity.Member;
 import com.example.coffee_order_system.domain.member.repository.MemberRepository;
+import com.example.coffee_order_system.domain.point.entity.PointAccount;
+import com.example.coffee_order_system.domain.point.repository.PointAccountRepository;
+import com.example.coffee_order_system.global.error.BusinessException;
+import com.example.coffee_order_system.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -16,32 +18,40 @@ import org.springframework.web.server.ResponseStatusException;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final PointAccountRepository pointAccountRepository;
 
     public MemberResponse login(LoginRequest request) {
         Member member = memberRepository.findByLoginId(request.loginId())
-                .orElseThrow(this::loginFailed);
+                .orElseThrow(() ->
+                        new BusinessException(ErrorCode.INVALID_CREDENTIALS)
+                );
 
         if (!member.getPassword().equals(request.password())) {
-            throw loginFailed();
+            throw new BusinessException(ErrorCode.INVALID_CREDENTIALS);
         }
 
-        return MemberResponse.from(member);
+        PointAccount account = getPointAccount(member.getId());
+
+        return MemberResponse.from(member, account);
     }
 
     public MemberResponse getMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED,
-                        "로그인한 회원이 존재하지 않습니다."
-                ));
+                .orElseThrow(() ->
+                        new BusinessException(ErrorCode.MEMBER_NOT_FOUND)
+                );
 
-        return MemberResponse.from(member);
+        PointAccount account = getPointAccount(memberId);
+
+        return MemberResponse.from(member, account);
     }
 
-    private ResponseStatusException loginFailed() {
-        return new ResponseStatusException(
-                HttpStatus.UNAUTHORIZED,
-                "아이디 또는 비밀번호가 올바르지 않습니다."
-        );
+    private PointAccount getPointAccount(Long memberId) {
+        return pointAccountRepository.findByMemberId(memberId)
+                .orElseThrow(() ->
+                        new BusinessException(
+                                ErrorCode.POINT_ACCOUNT_NOT_FOUND
+                        )
+                );
     }
 }
