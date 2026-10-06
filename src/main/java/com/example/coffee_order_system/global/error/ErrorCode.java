@@ -56,6 +56,11 @@ public enum ErrorCode {
             "POINT_001",
             "충전금액은 양수여야 합니다."
     ),
+    POINT_ACCOUNT_NOT_FOUND(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "POINT_004",
+            "회원의 포인트 계정이 준비되지 않았습니다."
+    ),
     INSUFFICIENT_POINTS(
             HttpStatus.CONFLICT,
             "POINT_002",

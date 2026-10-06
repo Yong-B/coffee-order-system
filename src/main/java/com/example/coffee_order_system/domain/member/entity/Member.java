@@ -23,10 +23,12 @@ public class Member {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(name = "point_balance", nullable = false)
-    private Long pointBalance = 0L;
-
-    @Column(name = "login_id", nullable = false, unique = true, length = 50)
+    @Column(
+            name = "login_id",
+            nullable = false,
+            unique = true,
+            length = 50
+    )
     private String loginId;
 
     @Column(nullable = false, length = 100)
